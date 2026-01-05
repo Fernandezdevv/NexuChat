@@ -1,0 +1,14 @@
+# Chaves e Segredos
+.env
+
+# Sessões do WhatsApp (Muito importante para evitar roubo de conta)
+.wwebjs_auth/
+.wwebjs_cache/
+sessions/
+# Pastas de dependências
+node_modules/
+
+# Logs e arquivos de sistema
+npm-debug.log*
+.DS_Store
+*.log

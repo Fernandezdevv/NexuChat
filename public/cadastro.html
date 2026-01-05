@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NexusChat - Criar Conta</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: radial-gradient(circle at bottom left, #1e1b4b, #0f172a, #020617);
+            min-height: 100vh;
+        }
+        .glass {
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+        .input-nexus {
+            background: rgba(2, 6, 23, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+        .input-nexus:focus {
+            border-color: #6366f1;
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.15);
+            background: rgba(2, 6, 23, 0.6);
+        }
+        .btn-nexus {
+            background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .btn-nexus:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -5px rgba(99, 102, 241, 0.4);
+            filter: brightness(1.1);
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center py-12 px-4">
+    <div class="max-w-lg w-full glass p-8 md:p-12 rounded-[2.5rem] relative overflow-hidden">
+        
+        <div class="text-center mb-10">
+            <div class="bg-indigo-500/10 w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-indigo-500/20">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
+                </svg>
+            </div>
+            <h1 class="text-2xl font-black tracking-tighter text-white uppercase italic">
+                Nexus<span class="text-indigo-500">Chat</span>
+            </h1>
+            <p class="text-slate-400 mt-2 text-sm font-medium">Configuração de Nova Instância</p>
+        </div>
+
+        <form onsubmit="handleCadastro(event)" class="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div class="md:col-span-2">
+                <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2 px-1 text-center">Dados de Operador</label>
+            </div>
+            
+            <div class="md:col-span-1">
+                <input type="text" id="nome" required 
+                    class="w-full input-nexus rounded-2xl px-5 py-4 text-white text-sm outline-none placeholder-slate-600 transition"
+                    placeholder="Seu nome completo">
+            </div>
+            
+            <div class="md:col-span-1">
+                <input type="email" id="email" required 
+                    class="w-full input-nexus rounded-2xl px-5 py-4 text-white text-sm outline-none placeholder-slate-600 transition"
+                    placeholder="E-mail de ativação">
+            </div>
+
+            <div class="md:col-span-2 mt-2">
+                <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2 px-1 text-center">Dados do Negócio</label>
+            </div>
+
+            <div class="md:col-span-2">
+                <input type="text" id="nome_empresa" required 
+                    class="w-full input-nexus rounded-2xl px-5 py-4 text-white text-sm outline-none placeholder-slate-600 transition"
+                    placeholder="Nome da Marca / Empresa">
+            </div>
+
+            <div class="md:col-span-2">
+                <input type="password" id="senha" required 
+                    class="w-full input-nexus rounded-2xl px-5 py-4 text-white text-sm outline-none placeholder-slate-600 transition"
+                    placeholder="Defina uma senha segura">
+            </div>
+
+            <button type="submit" class="md:col-span-2 btn-nexus py-4 rounded-2xl text-xs font-black text-white tracking-[0.2em] uppercase mt-4">
+                Finalizar Cadastro
+            </button>
+        </form>
+
+        <div class="mt-10 pt-8 border-t border-white/5 text-center">
+            <p class="text-sm text-slate-500 font-medium">
+                Já possui acesso? <a href="login.html" class="text-indigo-400 font-bold hover:text-indigo-300 transition underline underline-offset-4">Fazer Login</a>
+            </p>
+        </div>
+    </div>
+
+    <script>
+        async function handleCadastro(e) {
+            e.preventDefault();
+            const dados = {
+                nome: document.getElementById('nome').value,
+                email: document.getElementById('email').value,
+                nome_empresa: document.getElementById('nome_empresa').value,
+                senha: document.getElementById('senha').value
+            };
+
+            try {
+                const res = await fetch('/api/cadastro', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(dados)
+                });
+
+                const resultado = await res.json();
+
+                if (res.ok) {
+                    Swal.fire({
+                        title: 'Acesso Liberado!',
+                        text: 'Sua instância NexusChat foi ativada com sucesso.',
+                        icon: 'success',
+                        confirmButtonText: 'ACESSAR AGORA',
+                        confirmButtonColor: '#6366f1',
+                        background: '#0f172a',
+                        color: '#fff',
+                        borderRadius: '24px'
+                    }).then(() => {
+                        window.location.href = 'login.html';
+                    });
+                } else {
+                    Swal.fire({
+                        title: 'Pendência Detectada',
+                        text: resultado.message || "E-mail não autorizado ou já cadastrado.",
+                        icon: 'warning',
+                        confirmButtonText: 'REVISAR DADOS',
+                        confirmButtonColor: '#6366f1',
+                        background: '#0f172a',
+                        color: '#fff',
+                        borderRadius: '24px'
+                    });
+                }
+            } catch (err) {
+                Swal.fire({ title: 'Erro de Conexão', text: 'NexusEngine offline.', icon: 'error' });
+            }
+        }
+    </script>
+</body>
+</html>
