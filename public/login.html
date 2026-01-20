@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>NexuChat - Acesso Restrito</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: radial-gradient(circle at top right, #1e1b4b, #0f172a, #020617);
+            min-height: 100vh;
+            /* overflow: hidden; REMOVIDO para permitir rolagem no mobile quando o teclado abre */
+        }
+        .glass {
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+        .input-nexus {
+            background: rgba(2, 6, 23, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+        .input-nexus:focus {
+            border-color: #6366f1;
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.15);
+            background: rgba(2, 6, 23, 0.6);
+        }
+        .btn-nexus {
+            background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .btn-nexus:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -5px rgba(99, 102, 241, 0.4);
+            filter: brightness(1.1);
+        }
+        /* Ajuste do Alerta para não cortar texto no Mobile */
+        .swal2-popup {
+            font-size: 0.85rem !important;
+            padding: 1.5rem !important;
+            width: 90% !important;
+            max-width: 400px !important;
+        }
+        .light-blob {
+            position: absolute;
+            width: 300px; /* Reduzido para não pesar no mobile */
+            height: 300px;
+            background: rgba(99, 102, 241, 0.15);
+            filter: blur(80px);
+            border-radius: 50%;
+            z-index: -1;
+            animation: float 20s infinite alternate;
+        }
+        @media (min-width: 768px) {
+            .light-blob { width: 500px; height: 500px; filter: blur(100px); }
+        }
+        @keyframes float {
+            0% { transform: translate(-10%, -10%); }
+            100% { transform: translate(20%, 20%); }
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center px-4 py-8 relative">
+    <div class="light-blob top-0 left-0"></div>
+    <div class="light-blob bottom-0 right-0" style="background: rgba(16, 185, 129, 0.1);"></div>
+
+    <div class="max-w-md w-full glass p-8 md:p-10 rounded-[2rem] md:rounded-[2.5rem] relative overflow-hidden">
+        <div class="text-center mb-8 md:mb-10">
+            <div class="bg-indigo-500/10 w-14 h-14 md:w-16 md:h-16 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-indigo-500/20">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 md:h-8 md:w-8 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                </svg>
+            </div>
+            <h1 class="text-2xl md:text-3xl font-black tracking-tight text-white uppercase italic">
+                Nexus<span class="text-indigo-500">Chat</span>
+            </h1>
+            <p class="text-slate-400 mt-2 font-medium text-xs md:text-sm tracking-wide">NexusChat operações em IA</p>
+        </div>
+
+        <form onsubmit="handleLogin(event)" class="space-y-5 md:space-y-6">
+            <div>
+                <label class="block text-[9px] md:text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em] mb-2 px-1">Identificação / E-mail</label>
+                <input type="email" id="email" required 
+                    class="w-full input-nexus rounded-xl md:rounded-2xl px-5 py-3.5 md:py-4 text-white outline-none placeholder-slate-600 transition text-sm"
+                    placeholder="nome@empresa.com">
+            </div>
+            
+            <div>
+                <div class="flex justify-between items-center mb-2 px-1">
+                    <label class="text-[9px] md:text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em]">Senha de Acesso</label>
+                    
+                </div>
+                <input type="password" id="senha" required 
+                    class="w-full input-nexus rounded-xl md:rounded-2xl px-5 py-3.5 md:py-4 text-white outline-none transition text-sm"
+                    placeholder="••••••••">
+            </div>
+
+            <button type="submit" class="w-full btn-nexus py-3.5 md:py-4 rounded-xl md:rounded-2xl text-xs md:text-sm font-extrabold text-white tracking-widest uppercase mt-2">
+                Entrar no Sistema
+            </button>
+        </form>
+
+        <div class="mt-8 md:mt-10 pt-6 md:pt-8 border-t border-white/5 text-center">
+            <p class="text-xs md:text-sm text-slate-500 font-medium">
+                Não tem conta? <a href="cadastro.html" class="text-emerald-400 font-bold hover:text-emerald-300 transition underline underline-offset-4">Cadastre-se!</a>
+            </p>
+        </div>
+    </div>
+
+    <script>
+        async function handleLogin(e) {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const senha = document.getElementById('senha').value;
+
+            try {
+                const res = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, senha })
+                });
+
+                const data = await res.json();
+                
+                // LÓGICA ÚNICA E CORRIGIDA (Removida a duplicidade que causava erro)
+                if (data.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Acesso Autorizado',
+                        text: 'Conectando ao NexusEngine...',
+                        timer: 1500,
+                        showConfirmButton: false,
+                        background: '#0f172a',
+                        color: '#fff',
+                        borderRadius: '24px'
+                    }).then(() => {
+                        localStorage.setItem('id_empresa', data.id_empresa);
+                        window.location.href = 'index.html';
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Falha na Autenticação',
+                        text: data.message || 'E-mail ou senha incorretos.',
+                        confirmButtonColor: '#6366f1',
+                        background: '#0f172a',
+                        color: '#fff',
+                        borderRadius: '24px'
+                    });
+                }
+            } catch (err) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Erro de Conexão',
+                    text: 'Não foi possível contatar o servidor.',
+                    confirmButtonColor: '#6366f1',
+                    background: '#0f172a',
+                    color: '#fff',
+                    borderRadius: '24px'
+                });
+            }
+        }
+    </script>
+</body>
+</html>

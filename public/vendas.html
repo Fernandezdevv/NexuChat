@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NexuChat AI - Automação de Vendas via WhatsApp</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: #020617;
+            scroll-behavior: smooth;
+        }
+        .hero-gradient {
+            background: radial-gradient(circle at top center, rgba(99, 102, 241, 0.15) 0%, transparent 70%);
+        }
+        .glass-card {
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .btn-premium {
+            background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .btn-premium:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -5px rgba(99, 102, 241, 0.4);
+        }
+        .price-card {
+            transition: all 0.4s ease;
+        }
+        .price-card:hover {
+            transform: translateY(-8px);
+            border-color: #6366f1;
+        }
+    </style>
+</head>
+<body class="text-slate-200 selection:bg-indigo-500/30">
+
+    <nav class="fixed top-0 w-full z-50 bg-[#020617]/80 backdrop-blur-md border-b border-white/5">
+        <div class="max-w-7xl mx-auto px-6 h-20 flex justify-between items-center">
+            <div class="flex items-center gap-2">
+                <div class="bg-indigo-600 p-1.5 rounded-lg">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" /></svg>
+                </div>
+                <span class="text-xl font-black tracking-tighter text-white uppercase italic">Nexus<span class="text-indigo-500 font-bold">Chat</span></span>
+            </div>
+            <div class="hidden md:flex gap-8 text-sm font-bold uppercase tracking-widest text-slate-400">
+                <a href="#planos" class="hover:text-indigo-400 transition">Preços</a>
+                <a href="#" class="hover:text-indigo-400 transition">Tecnologia</a>
+            </div>
+            <a href="/acesso" class="px-6 py-2.5 rounded-xl border border-white/10 text-sm font-bold hover:bg-white/5 transition">Painel Acesso</a>
+        </div>
+    </nav>
+
+    <header class="relative pt-40 pb-32 px-6 hero-gradient overflow-hidden">
+        <div class="max-w-5xl mx-auto text-center relative z-10">
+            <span class="inline-flex items-center gap-2 px-4 py-1.5 mb-8 text-[10px] font-black tracking-[0.2em] text-indigo-400 uppercase bg-indigo-500/10 border border-indigo-500/20 rounded-full">
+                <span class="relative flex h-2 w-2">
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-2 w-2 bg-indigo-500"></span>
+                </span>
+                Automação de Atendimento 24h
+            </span>
+            <h1 class="text-5xl md:text-8xl font-black leading-tight mb-8 text-white tracking-tighter">
+                Sua empresa vendendo no <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-emerald-400">piloto automático.</span>
+            </h1>
+            <p class="text-slate-400 text-lg md:text-xl max-w-2xl mx-auto mb-12 font-medium leading-relaxed">
+                Integre uma Inteligência Artificial treinada no seu cardápio ou agenda diretamente ao seu WhatsApp. Qualifique leads e feche pedidos sem intervenção humana.
+            </p>
+            <div class="flex flex-col md:flex-row justify-center gap-4">
+                <a href="#planos" class="btn-premium text-white px-10 py-5 rounded-2xl font-black text-sm uppercase tracking-widest shadow-2xl">
+                    Começar Agora
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <section id="planos" class="py-24 px-6 relative">
+        <div class="max-w-6xl mx-auto">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-black text-white mb-4">Planos Flexíveis</h2>
+                <p class="text-slate-500 font-medium">Escolha a escala ideal para o seu faturamento</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+                <div class="price-card glass-card p-10 rounded-[2.5rem] flex flex-col justify-between">
+                    <div>
+                        <h3 class="text-indigo-400 text-xs font-black uppercase tracking-widest mb-6 text-center">Nexus Starter</h3>
+                        <p class="text-center mb-8">
+                            <span class="text-5xl font-black text-white">R$ 159</span>
+                            <span class="text-slate-500 font-bold">/mês</span>
+                        </p>
+                        <ul class="space-y-4 mb-10 text-sm font-medium text-slate-400">
+                            <li class="flex items-center gap-3"><svg class="h-5 w-5 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" /></svg> IA Atendente 24/7</li>
+                            <li class="flex items-center gap-3"><svg class="h-5 w-5 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" /></svg> Painel de Pedidos em Tempo Real</li>
+                        </ul>
+                    </div>
+                    <button onclick="selecionarPlano('mensal')" class="w-full py-4 rounded-2xl border border-white/10 hover:bg-white/5 font-black text-xs uppercase tracking-widest transition">
+                        Assinar Mensal
+                    </button>
+                </div>
+
+                <div class="price-card bg-indigo-600 p-10 rounded-[2.5rem] flex flex-col justify-between relative overflow-hidden shadow-2xl shadow-indigo-600/20">
+                    <div class="absolute top-6 right-6 bg-white/20 px-3 py-1 rounded-full text-[9px] font-black text-white uppercase tracking-tighter">Economia de 2 meses</div>
+                    <div>
+                        <h3 class="text-white/80 text-xs font-black uppercase tracking-widest mb-6 text-center">Nexus Pro (Anual)</h3>
+                        <p class="text-center mb-4">
+                            <span class="text-5xl font-black text-white">R$ 1.599</span>
+                            <span class="text-white/60 font-bold">/ano</span>
+                        </p>
+                        <p class="text-center text-indigo-100 text-xs font-bold mb-8">R$ 133,25 por mês no total</p>
+                        <ul class="space-y-4 mb-10 text-sm font-medium text-white/80">
+                            <li class="flex items-center gap-3"><svg class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" /></svg> Todas as funções Pro</li>
+                            <li class="flex items-center gap-3"><svg class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" /></svg> Suporte Prioritário</li>
+                        </ul>
+                    </div>
+                    <button onclick="selecionarPlano('anual')" class="w-full py-4 bg-white text-indigo-600 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-indigo-50 transition shadow-xl">
+                        Assinar Anual
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="identificacao" class="py-24 px-6 max-w-xl mx-auto hidden">
+        <div class="glass-card p-10 rounded-[2.5rem] border-indigo-500/20">
+            <h3 class="text-2xl font-black text-white mb-2 text-center uppercase italic">Quase lá!</h3>
+            <p class="text-slate-400 text-center mb-8 text-sm font-medium">Informe seu melhor e-mail para vincularmos o pagamento e liberar seu acesso.</p>
+            <div class="space-y-4">
+                <input type="email" id="email-pagador" placeholder="seuemail@exemplo.com" class="w-full bg-black/40 border border-white/10 px-6 py-4 rounded-2xl focus:border-indigo-500 outline-none transition text-white">
+                <button id="btn-gerar" onclick="gerarPagamentoReal()" class="btn-premium w-full text-white py-5 rounded-2xl font-black text-xs uppercase tracking-[0.2em] shadow-lg">Gerar Pagamento</button>
+                <button onclick="voltarParaPlanos()" class="w-full text-slate-500 text-[10px] font-bold uppercase tracking-widest hover:text-white transition mt-2">Trocar Plano Escolhido</button>
+            </div>
+        </div>
+    </section>
+
+    <div id="modal-pagamento" class="fixed inset-0 bg-[#020617]/95 flex items-center justify-center z-[100] hidden px-6 backdrop-blur-xl">
+        <div class="bg-white text-slate-900 p-8 md:p-12 rounded-[3rem] max-w-md w-full text-center shadow-2xl relative">
+            <h3 class="text-3xl font-black mb-2 tracking-tighter">Escaneie o QR Code</h3>
+            <p class="text-slate-500 text-sm font-medium mb-8">A liberação do sistema é instantânea.</p>
+            <div class="bg-slate-50 p-6 rounded-3xl inline-block mb-8 border border-slate-100">
+                <img id="img-qrcode" src="" alt="QR Code PIX" class="w-56 h-56 mx-auto">
+            </div>
+            <div class="bg-slate-100 p-5 rounded-2xl mb-8 text-left">
+                <p class="text-[9px] uppercase font-black text-slate-400 mb-2 tracking-widest px-1">Copia e Cola</p>
+                <div class="flex items-center gap-3">
+                    <input id="copia-cola" readonly class="bg-transparent border-none text-[10px] text-slate-600 w-full outline-none font-mono overflow-hidden text-ellipsis italic">
+                    <button onclick="copiarPix()" class="text-indigo-600 font-black text-[10px] uppercase hover:text-indigo-800 transition">Copiar</button>
+                </div>
+            </div>
+            <button onclick="location.href='/registrar'" class="w-full py-5 bg-slate-900 text-white rounded-2xl font-black text-xs uppercase tracking-widest hover:opacity-90 transition">
+                Já Paguei, Ir para Cadastro
+            </button>
+        </div>
+    </div>
+<section id="faq" class="py-24 px-6 max-w-4xl mx-auto">
+    <h2 class="text-3xl font-black text-white mb-12 text-center">Perguntas Frequentes</h2>
+    <div class="space-y-6">
+        <div class="glass-card p-6 rounded-2xl">
+            <h4 class="text-indigo-400 font-bold mb-2 italic">Preciso deixar meu celular ligado?</h4>
+            <p class="text-slate-400 text-sm">Não. Após escanear o QR Code, nosso servidor mantém a conexão ativa 24h por dia, independente do seu aparelho.</p>
+        </div>
+        <div class="glass-card p-6 rounded-2xl">
+            <h4 class="text-indigo-400 font-bold mb-2 italic">A IA aprende com meus dados?</h4>
+            <p class="text-slate-400 text-sm">Sim. Você treina a IA com seu cardápio, serviços ou regras de negócio e ela responde exatamente conforme suas instruções.</p>
+        </div>
+    </div>
+</section>
+    <footer class="bg-[#020617] border-t border-white/5 pt-16 pb-8 px-6">
+    <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
+        <div class="col-span-1 md:col-span-2">
+            <div class="flex items-center gap-2 mb-6">
+                <div class="bg-indigo-600 p-1.5 rounded-lg">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" /></svg>
+                </div>
+                <span class="text-xl font-black tracking-tighter text-white uppercase italic">Nexus<span class="text-indigo-500 font-bold">Chat</span></span>
+            </div>
+            <p class="text-slate-500 text-sm leading-relaxed max-w-sm">
+                Transformando atendimentos em vendas automáticas através de inteligência artificial especializada para WhatsApp.
+            </p>
+        </div>
+
+        <div>
+            <h4 class="text-white font-bold mb-6 uppercase text-[10px] tracking-[0.2em]">Legal</h4>
+            <ul class="text-slate-500 text-sm space-y-4 font-medium">
+                <li><a href="/termos" class="hover:text-indigo-400 transition">Termos de Uso</a></li>
+                <li><a href="/privacidade" class="hover:text-indigo-400 transition">Privacidade</a></li>
+                <li><a href="/reembolso" class="hover:text-indigo-400 transition">Política de Reembolso</a></li>
+            </ul>
+        </div>
+
+        <div>
+            <h4 class="text-white font-bold mb-6 uppercase text-[10px] tracking-[0.2em]">Ajuda</h4>
+            <ul class="text-slate-500 text-sm space-y-4 font-medium">
+                <li><a href="#faq" class="hover:text-indigo-400 transition">FAQ</a></li>
+                <li><a href="https://wa.me/21994168063" class="hover:text-indigo-400 transition">Suporte WhatsApp</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="max-w-7xl mx-auto border-t border-white/5 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+        <p class="text-slate-600 text-[10px] font-bold uppercase tracking-widest">
+            &copy; 2026 NexusChat AI - Todos os direitos reservados. CNPJ: 00.000.000/0001-00
+        </p>
+        <div class="flex gap-6">
+             <img src="https://img.shields.io/badge/SSL-Seguro-brightgreen" alt="SSL">
+             <img src="https://img.shields.io/badge/Pagamento-Mercado_Pago-blue" alt="Mercado Pago">
+        </div>
+    </div>
+</footer>
+
+    <script>
+        let planoGlobal = '';
+
+        function selecionarPlano(plano) {
+            planoGlobal = plano;
+            document.getElementById('planos').classList.add('hidden');
+            document.getElementById('identificacao').classList.remove('hidden');
+            document.getElementById('identificacao').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function voltarParaPlanos() {
+            document.getElementById('identificacao').classList.add('hidden');
+            document.getElementById('planos').classList.remove('hidden');
+        }
+
+    async function gerarPagamentoReal() {
+    const email = document.getElementById('email-pagador').value;
+    if (!email || !email.includes('@')) return Swal.fire('E-mail Inválido', 'Informe um e-mail real.', 'error');
+
+    const btn = document.getElementById('btn-gerar');
+    btn.disabled = true;
+    btn.innerText = 'REDIRECIONANDO...';
+
+    try {
+        const response = await fetch('/api/pagamento/gerar', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ plano: planoGlobal, email: email })
+        });
+        
+        const data = await response.json();
+
+        // Redireciona para o Checkout Pro do Mercado Pago (Mensal ou Anual)
+        if (data.init_point) {
+            window.location.href = data.init_point;
+        } else {
+            throw new Error("Resposta inválida do servidor");
+        }
+
+    } catch (err) { 
+        console.error("Erro no processo:", err);
+        Swal.fire('Erro Técnico', 'Não foi possível conectar ao Mercado Pago.', 'error');
+        btn.disabled = false;
+        btn.innerText = 'GERAR PAGAMENTO';
+    }
+}
+
+        function copiarPix() {
+            const input = document.getElementById('copia-cola');
+            input.select();
+            document.execCommand('copy');
+            Swal.fire({ title: 'Copiado!', text: 'Código PIX pronto para colar.', icon: 'success', timer: 1500, showConfirmButton: false });
+        }
+    </script>
+</body>
+</html>
