@@ -227,6 +227,16 @@ app.post('/webhook', async (req, res) => {
 // ==========================================
 
 app.get('/api/pedidos', async (req, res) => {
+    
+    // Exemplo de trava de segurança por data no Backend
+const [verificacao] = await db.execute(
+    "SELECT data_expiracao FROM empresas WHERE id = ?", 
+    [id_empresa]
+);
+
+if (verificacao.length > 0 && new Date(verificacao[0].data_expiracao) < new Date()) {
+    return res.status(403).json({ error: "Assinatura expirada no servidor." });
+}
     const { id_empresa } = req.query;
 
     // TRAVA 1: Impede que a API retorne qualquer dado se o ID não for enviado

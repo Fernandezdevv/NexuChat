@@ -78,10 +78,10 @@
                     <p id="assinatura-timer" class="text-slate-700 font-mono text-xs md:text-sm font-bold tracking-tight">Verificando...</p>
                 </div>
             </div>
-            <a href="vendas.html" id="btn-renovar" style="display: none;" 
-               class="bg-emerald-500 hover:bg-emerald-600 text-white text-[9px] font-bold uppercase py-1.5 px-3 rounded-lg transition-all animate-pulse">
-                Renovar Agora
-            </a>
+            <button id="btn-renovar" style="display: none;" onclick="renovarAssinaturaLogada()"
+   class="bg-emerald-500 hover:bg-emerald-600 text-white text-[10px] font-bold uppercase py-2 px-4 rounded-xl transition-all shadow-lg shadow-emerald-500/20 animate-pulse">
+    Renovar Agora
+</button>
         </div>
     </div>
 
@@ -319,6 +319,49 @@ async function carregarStatusAssinatura() {
         }, 1000);
     }
 }
+
+async function renovarAssinaturaLogada() {
+    // Pegamos o e-mail que salvamos no login.html
+    const emailUsuario = localStorage.getItem('user_email');
+    
+    if (!emailUsuario) {
+        Swal.fire('Erro', 'Sessão expirada. Por favor, faça login novamente.', 'error');
+        window.location.href = 'login.html';
+        return;
+    }
+
+    // Mostra um carregando para o usuário não clicar mil vezes
+    Swal.fire({
+        title: 'Gerando renovação...',
+        allowOutsideClick: false,
+        didOpen: () => { Swal.showLoading(); }
+    });
+
+    try {
+        const response = await fetch('/api/pagamento/gerar', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+                plano: 'mensal', // Você pode mudar conforme a lógica
+                email: emailUsuario 
+            })
+        });
+
+        const data = await response.json();
+
+        if (data.init_point) {
+            // Redireciona direto para o checkout do Mercado Pago
+            window.location.href = data.init_point;
+        } else {
+            throw new Error('Falha ao gerar link');
+        }
+    } catch (error) {
+        console.error(error);
+        Swal.fire('Erro', 'Não foi possível gerar o link de pagamento.', 'error');
+    }
+}
+
+
 
 // Garante que o botão de renovar funcione
 function renovarAssinatura() {
