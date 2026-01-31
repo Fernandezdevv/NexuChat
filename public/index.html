@@ -360,6 +360,35 @@ async function renovarAssinaturaLogada() {
         Swal.fire('Erro', 'Não foi possível gerar o link de pagamento.', 'error');
     }
 }
+    // --- SCRIPT DE ATUALIZAÇÃO PÓS-PAGAMENTO ---
+const urlParams = new URLSearchParams(window.location.search);
+
+if (urlParams.get('pago') === 'true') {
+    // 1. Mostra um alerta visual de sucesso
+    Swal.fire({
+        title: 'Assinatura Renovada!',
+        text: 'Sua licença foi atualizada. Sincronizando dados...',
+        icon: 'success',
+        showConfirmButton: false,
+        timer: 2500,
+        background: '#0f172a',
+        color: '#fff'
+    }).then(async () => {
+        const emailUsuario = localStorage.getItem('user_email');
+        try {
+            const response = await fetch(`/api/usuario/assinatura?email=${emailUsuario}`);
+            const data = await response.json();
+            if (data.data_expiracao) {
+                localStorage.setItem('data_expiracao', data.data_expiracao);
+                window.history.replaceState({}, document.title, window.location.pathname);
+                location.reload(); 
+            }
+        } catch (err) {
+            console.error("Erro ao sincronizar data:", err);
+        }
+    });
+}
+
 
 
 

@@ -94,12 +94,27 @@ app.post('/api/pagamento/gerar', async (req, res) => {
     const { plano, email } = req.body;
     const emailLimpo = email ? email.toLowerCase().trim() : 'cliente@exemplo.com';
 
-    const valor = plano === 'anual' ? 1599.00 : 1.00; // Ajuste conforme preferir
+    const valor = plano === 'anual' ? 1599.00 : 159.00; 
     const descricao = plano === 'anual' ? 'Assinatura Anual NexusChat' : 'Assinatura Mensal NexusChat';
     const urlBase = "https://nexuchat.com";
 
-    // LÓGICA MENSAL: Gera QR Code para exibir no seu site
     try {
+        // --- LÓGICA DE DIRECIONAMENTO DINÂMICO ---
+        // Verificamos se esse e-mail já existe na tabela de empresas
+        const [empresa] = await db.execute("SELECT id FROM empresas WHERE email_contato = ?", [emailLimpo]);
+        
+        let urlSucesso;
+
+        if (empresa.length > 0) {
+            // Se a empresa já existe, é uma RENOVAÇÃO
+            // Mandamos para o terminal com o parâmetro ?pago=true para atualizar o timer
+            urlSucesso = `${urlBase}/terminal?pago=true`;
+        } else {
+            // Se não existe, é o PRIMEIRO PAGAMENTO
+            // Mandamos para a tela de registro
+            urlSucesso = `${urlBase}/registrar?email=${emailLimpo}`;
+        }
+
         const preferenceData = {
             items: [{ 
                 title: descricao, 
@@ -110,22 +125,19 @@ app.post('/api/pagamento/gerar', async (req, res) => {
             payer: { email: emailLimpo },
             external_reference: emailLimpo,
             notification_url: `${urlBase}/webhook`,
-            // Configura o retorno automático para sua página de cadastro
             back_urls: { 
-                success: `${urlBase}/registrar?email=${emailLimpo}`,
-                pending: `${urlBase}/registrar?email=${emailLimpo}`,
+                success: urlSucesso,
+                pending: urlSucesso,
                 failure: `${urlBase}/vendas` 
             },
-            auto_return: "approved", // Redireciona o cliente sozinho após o pagamento
+            auto_return: "approved",
             payment_methods: {
-                installments: 12, // Permite parcelamento
-                excluded_payment_types: [], // Não exclui nenhuma forma de pagamento (Cartão, PIX, etc)
+                installments: 12,
+                excluded_payment_types: [],
             }
         };
 
         const response = await preference.create({ body: preferenceData });
-        
-        // Agora ambos os planos retornam o link do Mercado Pago
         res.json({ init_point: response.init_point });
     } catch (error) {
         console.error("Erro ao gerar Checkout:", error);
