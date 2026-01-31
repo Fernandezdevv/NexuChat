@@ -323,21 +323,19 @@ app.post('/api/login', async (req, res) => {
 
         if (rows.length > 0) {
             const empresa = rows[0];
-            const hoje = new Date();
-            const expiracao = new Date(empresa.data_expiracao);
-
-            if (hoje > expiracao) {
-                return res.status(403).json({
-                    success: false,
-                    message: "Assinatura expirada. Renove o seu plano para aceder."
-                });
-            }
-
-            res.json({ success: true, id_empresa: empresa.id_empresa });
+            
+            // Enviamos os dados para o dashboard lidar com o visual do timer
+            res.json({ 
+                success: true, 
+                id_empresa: empresa.id_empresa,
+                data_expiracao: empresa.data_expiracao, // Agora o frontend recebe isso
+                status_assinatura: empresa.status_assinatura
+            });
         } else {
             res.status(401).json({ success: false, message: "E-mail ou senha incorretos." });
         }
     } catch (err) {
+        console.error("Erro no login:", err);
         res.status(500).json({ error: "Erro no servidor" });
     }
 });
@@ -375,6 +373,21 @@ app.post('/api/cadastro', async (req, res) => {
             return res.status(400).json({ error: "Este e-mail já possui um usuário cadastrado." });
         }
         res.status(500).json({ error: "Erro ao criar conta." });
+    }
+});
+
+// Rota para buscar status da assinatura
+app.get('/api/usuario/assinatura', async (req, res) => {
+    const email = req.query.email; // O email que você salvou no login
+    try {
+        const [rows] = await db.execute('SELECT data_expiracao FROM usuarios WHERE email = ?', [email]);
+        if (rows.length > 0) {
+            res.json({ data_expiracao: rows[0].data_expiracao });
+        } else {
+            res.status(404).json({ error: "Usuário não encontrado" });
+        }
+    } catch (error) {
+        res.status(500).json({ error: "Erro ao buscar assinatura" });
     }
 });
 

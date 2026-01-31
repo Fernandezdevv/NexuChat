@@ -127,7 +127,6 @@
 
                 const data = await res.json();
                 
-                // LÓGICA ÚNICA E CORRIGIDA (Removida a duplicidade que causava erro)
                 if (data.success) {
                     Swal.fire({
                         icon: 'success',
@@ -139,8 +138,12 @@
                         color: '#fff',
                         borderRadius: '24px'
                     }).then(() => {
+                        // ADICIONADO: Salva a expiração e o email para o Timer e Renovação
                         localStorage.setItem('id_empresa', data.id_empresa);
-                        window.location.href = 'index.html';
+                        localStorage.setItem('data_expiracao', data.data_expiracao);
+                        localStorage.setItem('user_email', email); 
+                        
+                        window.location.href = 'index.html'; // Ou dashboard.html conforme seu uso
                     });
                 } else {
                     Swal.fire({

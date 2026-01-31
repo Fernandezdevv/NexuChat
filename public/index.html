@@ -62,6 +62,25 @@
                 <div class="h-6 w-px bg-slate-200 mx-1 md:mx-2"></div>
                 <button onclick="logout()" class="text-xs md:text-sm font-bold text-rose-500 hover:bg-rose-50 px-2 md:px-3 py-2 rounded-lg transition whitespace-nowrap">Sair</button>
             </div>
+
+            <div id="timer-container" class="glass p-4 rounded-2xl mb-6 border border-indigo-500/20 flex flex-col md:flex-row items-center justify-between gap-4">
+    <div class="flex items-center gap-3">
+        <div class="bg-indigo-500/20 p-2 rounded-lg">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+        </div>
+        <div>
+            <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Status da Licença</p>
+            <p id="assinatura-timer" class="text-white font-mono text-sm md:text-base tracking-wider">Calculando tempo...</p>
+        </div>
+    </div>
+    
+    <a href="vendas.html" id="btn-renovar" style="display: none;" 
+       class="bg-emerald-500 hover:bg-emerald-600 text-white text-[10px] font-bold uppercase py-2 px-4 rounded-xl transition-all shadow-lg shadow-emerald-500/20">
+        Renovar Agora
+    </a>
+</div>
         </div>
     </nav>
 
@@ -242,6 +261,72 @@
                 }
             }
         }
+async function carregarStatusAssinatura() {
+    // 1. Pegamos a data que salvamos no momento do login
+    const expiraStr = localStorage.getItem('data_expiracao');
+    const timerElemento = document.getElementById('assinatura-timer');
+    const btnRenovar = document.getElementById('btn-renovar');
+
+    // Se por algum motivo não houver data, tentamos buscar no banco (segurança)
+    if (!expiraStr || expiraStr === "null") {
+        console.log("Data não encontrada no cache, buscando na API...");
+        const emailUsuario = localStorage.getItem('user_email');
+        if (!emailUsuario) return;
+        
+        try {
+            const res = await fetch(`/api/usuario/assinatura?email=${emailUsuario}`);
+            const data = await res.json();
+            if (data.data_expiracao) {
+                localStorage.setItem('data_expiracao', data.data_expiracao);
+                location.reload(); // Recarrega para iniciar o timer com a nova data
+            }
+        } catch (e) { console.error(e); }
+        return;
+    }
+
+    const expiraEm = new Date(expiraStr).getTime();
+
+    // 2. Função que atualiza o relógio na tela
+    const atualizarRelogio = () => {
+        const agora = new Date().getTime();
+        const diff = expiraEm - agora;
+
+        if (diff <= 0) {
+            timerElemento.innerHTML = "⚠️ ASSINATURA EXPIRADA";
+            timerElemento.style.color = "#ef4444"; // Vermelho bonito (Tailwind red-500)
+            btnRenovar.style.display = "block";
+            return false; // Para o loop
+        }
+
+        const dias = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const horas = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutos = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const segundos = Math.floor((diff % (1000 * 60)) / 1000);
+
+        timerElemento.innerHTML = `Sua licença vence em: <b>${dias}d ${horas}h ${minutos}m ${segundos}s</b>`;
+        
+        // Se faltar menos de 3 dias, já mostra o botão de renovar
+        if (dias < 3) btnRenovar.style.display = "block";
+        
+        return true;
+    };
+
+    // Inicia o timer
+    if (atualizarRelogio()) {
+        const interval = setInterval(() => {
+            if (!atualizarRelogio()) clearInterval(interval);
+        }, 1000);
+    }
+}
+
+// Garante que o botão de renovar funcione
+function renovarAssinatura() {
+    window.location.href = 'vendas.html'; 
+}
+
+document.addEventListener('DOMContentLoaded', carregarStatusAssinatura);
+       
+
 
         buscarPedidos();
         setInterval(buscarPedidos, 5000);
