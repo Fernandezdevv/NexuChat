@@ -94,7 +94,7 @@ app.post('/api/pagamento/gerar', async (req, res) => {
     const { plano, email } = req.body;
     const emailLimpo = email ? email.toLowerCase().trim() : 'cliente@exemplo.com';
 
-    const valor = plano === 'anual' ? 1599.00 : 159.00; 
+    const valor = plano === 'anual' ? 1599.00 : 1.00; 
     const descricao = plano === 'anual' ? 'Assinatura Anual NexusChat' : 'Assinatura Mensal NexusChat';
     const urlBase = "https://nexuchat.com";
 
