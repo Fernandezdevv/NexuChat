@@ -62,27 +62,28 @@
                 <div class="h-6 w-px bg-slate-200 mx-1 md:mx-2"></div>
                 <button onclick="logout()" class="text-xs md:text-sm font-bold text-rose-500 hover:bg-rose-50 px-2 md:px-3 py-2 rounded-lg transition whitespace-nowrap">Sair</button>
             </div>
-
-            <div id="timer-container" class="glass p-4 rounded-2xl mb-6 border border-indigo-500/20 flex flex-col md:flex-row items-center justify-between gap-4">
-    <div class="flex items-center gap-3">
-        <div class="bg-indigo-500/20 p-2 rounded-lg">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-        </div>
-        <div>
-            <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Status da Licença</p>
-            <p id="assinatura-timer" class="text-white font-mono text-sm md:text-base tracking-wider">Calculando tempo...</p>
-        </div>
-    </div>
-    
-    <a href="vendas.html" id="btn-renovar" style="display: none;" 
-       class="bg-emerald-500 hover:bg-emerald-600 text-white text-[10px] font-bold uppercase py-2 px-4 rounded-xl transition-all shadow-lg shadow-emerald-500/20">
-        Renovar Agora
-    </a>
-</div>
         </div>
     </nav>
+
+    <div class="bg-white border-b border-slate-100 py-3">
+        <div class="container mx-auto px-4 md:px-6 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="bg-indigo-50 p-2 rounded-lg">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                </div>
+                <div>
+                    <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Status da Licença</p>
+                    <p id="assinatura-timer" class="text-slate-700 font-mono text-xs md:text-sm font-bold tracking-tight">Verificando...</p>
+                </div>
+            </div>
+            <a href="vendas.html" id="btn-renovar" style="display: none;" 
+               class="bg-emerald-500 hover:bg-emerald-600 text-white text-[9px] font-bold uppercase py-1.5 px-3 rounded-lg transition-all animate-pulse">
+                Renovar Agora
+            </a>
+        </div>
+    </div>
 
     <main class="container mx-auto px-4 md:px-6 py-6 md:py-10">
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
