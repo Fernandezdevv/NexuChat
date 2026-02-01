@@ -25,22 +25,18 @@ async function inicializarInstancia(idEmpresaRaw) {
             type: 'remote',
             remotePath: 'https://raw.githubusercontent.com/wppconnect-team/wa-version/main/html/2.3000.1014133453-alpha.html',
         },*/
-        puppeteer: {
-            headless: true, // Pode testar como 'new' se o seu puppeteer for o mais atual
+       puppeteer: {
+            headless: true,
             args: [
                 '--no-sandbox',
                 '--disable-setuid-sandbox',
                 '--disable-dev-shm-usage',
-                '--disable-accelerated-2d-canvas',
-                '--no-first-run',
+                '--disable-gpu',
                 '--no-zygote',
-                '--single-process', // Remova esta linha se o erro persistir
-                '--disable-gpu'
+                '--single-process'
             ],
-            // Isso aqui ajuda a evitar o erro de "main frame too early"
-            handleSIGINT: false,
-            handleSIGTERM: false,
-            handleSIGHUP: false,
+            // ISSO AQUI É O SEGREDO: Dá tempo do WhatsApp carregar
+            waitNavigationFinished: false,
         }
     });
     client.options.ackTimeoutMs = 0;
@@ -54,18 +50,17 @@ async function inicializarInstancia(idEmpresaRaw) {
 
     client.on('ready', async () => {
         try {
-            console.log(`✅ WhatsApp pronto para Empresa: ${idEmpresa}`);
-            delete qrCodesAtivos[idEmpresa];
-
-            // Ajuste crucial: Garantir que o número seja String para o Banco de Dados
+            console.log(`✅ [DEBUG] Evento READY disparado para Empresa: ${idEmpresa}`);
             const numeroConectado = client.info.wid.user.toString();
+            console.log(`📱 Número detectado: ${numeroConectado}`);
+            
             await db.execute(
                 'UPDATE empresas SET whatsapp_numero = ? WHERE id = ?',
                 [numeroConectado, idEmpresa]
             );
-            console.log(`💾 Número ${numeroConectado} salvo para a empresa ${idEmpresa}`);
+            console.log(`💾 Banco atualizado com sucesso.`);
         } catch (err) {
-            console.error("Erro no Ready/Banco:", err.message);
+            console.error("❌ ERRO CRÍTICO NO READY:", err);
         }
     });
 
