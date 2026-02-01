@@ -89,6 +89,8 @@ async function inicializarInstancia(idEmpresaRaw) {
 
     client.on('message', async (msg) => {
 
+        console.log(`📩 [Empresa ${idEmpresa}] Mensagem recebida de ${msg.from}: "${msg.body}"`);
+
     if (msg.from.includes('@newsletter') || msg.from.includes('@g.us') || msg.from === 'status@broadcast') {
         return; 
     }
@@ -102,7 +104,7 @@ async function inicializarInstancia(idEmpresaRaw) {
 
         // 2. FILTRO DE TEMPO (Mensagens com mais de 20s de atraso são ignoradas)
         const agora = Math.floor(Date.now() / 1000);
-        if (agora - msg.timestamp > 20) return;
+        if (agora - msg.timestamp > 60) return;
 
         // 3. DETECÇÃO DE OUTROS ROBÔS (Filtra saudações comerciais comuns)
         const gatilhosBots = [/bem-vindo/i, /atendimento/i, /direcionando/i, /olá!/i];
