@@ -1,4 +1,3 @@
-
 const { Client, LocalAuth } = require('whatsapp-web.js');
 const qrcodeTerminal = require('qrcode-terminal');
 const { processarMensagem } = require('../index');
@@ -24,22 +23,23 @@ async function inicializarInstancia(idEmpresaRaw) {
             type: 'remote',
             remotePath: 'https://raw.githubusercontent.com/wppconnect-team/wa-version/main/html/2.3000.1014133453-alpha.html',
         },*/
-       puppeteer: {
-        headless: true,
-        args: [
-            '--no-sandbox',
-            '--disable-setuid-sandbox',
-            '--disable-dev-shm-usage',
-            '--disable-accelerated-2d-canvas',
-            '--no-first-run',
-            '--no-zygote',
-            '--single-process',
-            '--disable-gpu'
-        ],
-    },
-    // O USER AGENT faz o WhatsApp achar que é um Chrome normal de Windows
-    userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36'
-});
+        puppeteer: {
+            headless: true,
+            args: [
+                '--no-sandbox',
+                '--disable-setuid-sandbox',
+                '--disable-dev-shm-usage',
+                '--disable-accelerated-2d-canvas',
+                '--no-first-run',
+                '--no-zygote',
+                '--single-process',
+                '--disable-gpu'
+            ],
+        },
+        // O USER AGENT faz o WhatsApp achar que é um Chrome normal de Windows
+        userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36'
+    });
+
     client.options.ackTimeoutMs = 0;
 
     client.on('qr', (qr) => {
@@ -49,7 +49,7 @@ async function inicializarInstancia(idEmpresaRaw) {
         }
     });
 
-   // 1. Evento de Autenticação (Acontece logo após o scan)
+    // 1. Evento de Autenticação (Acontece logo após o scan)
     client.on('authenticated', () => {
         console.log(`🔑 [Empresa ${idEmpresa}] Autenticado com sucesso! Carregando mensagens...`);
     });
@@ -59,7 +59,6 @@ async function inicializarInstancia(idEmpresaRaw) {
         try {
             console.log(`✅ [DEBUG] Evento READY disparado para Empresa: ${idEmpresa}`);
             
-            // Verifica se info e wid existem para evitar erro de undefined
             if (client.info && client.info.wid) {
                 const numeroConectado = client.info.wid.user.toString();
                 console.log(`📱 Número detectado: ${numeroConectado}`);
@@ -78,12 +77,6 @@ async function inicializarInstancia(idEmpresaRaw) {
     // 3. Evento de Falha
     client.on('auth_failure', msg => {
         console.error(`❌ Falha na autenticação da Empresa ${idEmpresa}: ${msg}`);
-    });
-
-    // 4. Inicialização (Mantenha no final da função inicializarInstancia)
-    client.initialize().catch(err => {
-        console.error(`Erro ao inicializar empresa ${idEmpresa}:`, err.message);
-    });
     });
 
     let desconectando = false;
@@ -108,56 +101,51 @@ async function inicializarInstancia(idEmpresaRaw) {
     });
 
     client.on('message', async (msg) => {
-
         console.log(`📩 [Empresa ${idEmpresa}] Mensagem recebida de ${msg.from}: "${msg.body}"`);
 
-    if (msg.from.includes('@newsletter') || msg.from.includes('@g.us') || msg.from === 'status@broadcast') {
-        return; 
-    }
-    msg.askForPresence = false;
-    const chaveProcesso = `${idEmpresa}:${msg.from}`;
+        if (msg.from.includes('@newsletter') || msg.from.includes('@g.us') || msg.from === 'status@broadcast') {
+            return; 
+        }
+        msg.askForPresence = false;
+        const chaveProcesso = `${idEmpresa}:${msg.from}`;
 
-    try {
-        // 1. FILTROS INSTANTÂNEOS (Não gastam processamento)
-        if (msg.fromMe || msg.from.includes('@g.us') || msg.isStatus || !msg.body) return;
-        if (usuariosProcessando.has(chaveProcesso)) return;
+        try {
+            // 1. FILTROS INSTANTÂNEOS
+            if (msg.fromMe || !msg.body) return;
+            if (usuariosProcessando.has(chaveProcesso)) return;
 
-        // 2. FILTRO DE TEMPO (Mensagens com mais de 20s de atraso são ignoradas)
-        const agora = Math.floor(Date.now() / 1000);
-        if (agora - msg.timestamp > 60) return;
+            // 2. FILTRO DE TEMPO
+            const agora = Math.floor(Date.now() / 1000);
+            if (agora - msg.timestamp > 60) return;
 
-        // 3. DETECÇÃO DE OUTROS ROBÔS (Filtra saudações comerciais comuns)
-        const gatilhosBots = [/bem-vindo/i, /atendimento/i, /direcionando/i, /olá!/i];
-        const eOutroBot = gatilhosBots.some(regex => regex.test(msg.body.toLowerCase()));
+            // 3. DETECÇÃO DE OUTROS ROBÔS
+            const gatilhosBots = [/bem-vindo/i, /atendimento/i, /direcionando/i, /olá!/i];
+            const eOutroBot = gatilhosBots.some(regex => regex.test(msg.body.toLowerCase()));
 
-        if (eOutroBot) {
-             try{
-            const contato = await msg.getContact();
-
-            // Se parecer robô e NÃO estiver nos contatos do celular, ignore 100%
-
-            if (contato && !contato.isMyContact) {
-                console.log(`🤖 [Empresa ${idEmpresa}] Robô de terceiro detectado em ${msg.from}. Ignorando.`);
-                return;
+            if (eOutroBot) {
+                try {
+                    const contato = await msg.getContact();
+                    if (contato && !contato.isMyContact) {
+                        console.log(`🤖 [Empresa ${idEmpresa}] Robô de terceiro detectado em ${msg.from}. Ignorando.`);
+                        return;
+                    }
+                } catch (e) {
+                    console.log("Erro ao verificar contato, ignorando filtro de robo");
+                }
             }
-        } catch (e){
-             console.log("Erro ao verificar contato, ignorando filtro de robo")
-         }
-       }
 
-        // Se passou em todos os testes, marca como "em processamento"
-        usuariosProcessando.add(chaveProcesso);
+            // Marca como processando
+            usuariosProcessando.add(chaveProcesso);
 
             const [empresas] = await db.execute('SELECT * FROM empresas WHERE id = ?', [idEmpresa]);
             if (empresas.length === 0) return;
 
-            //const chat = await msg.getChat();
             let respostaIA = await processarMensagem(idEmpresa, msg.from, msg.body);
 
             if (!respostaIA || respostaIA.includes("Erro da API")) {
-              console.log(`⚠️ IA falhou para Empresa ${idEmpresa}. Resposta: ${respostaIA}`);
-            return;
-}
+                console.log(`⚠️ IA falhou para Empresa ${idEmpresa}. Resposta: ${respostaIA}`);
+                return;
+            }
 
             const eCancelamento = respostaIA.toLowerCase().includes('[pedido_cancelado]');
             const ePedidoFinalizado = respostaIA.toLowerCase().includes('[pedido_finalizado]');
@@ -184,22 +172,18 @@ async function inicializarInstancia(idEmpresaRaw) {
             let partes = respostaLimpa.split('\n\n').filter(p => p.trim().length > 1);
             if (partes.length === 1) partes = respostaLimpa.split('\n').filter(p => p.trim().length > 1);
 
-           for (const parte of partes) {
-                 if (!instancias[idEmpresa]) break;
-
-                 await new Promise(res => setTimeout(res, 2000));
-
-               try {
-                  // Usamos o ID da mensagem para responder de forma mais "bruta"
-                  // Isso evita que a biblioteca tente carregar o chat completo
-                  await client.sendMessage(msg.from, parte.trim(), { 
-                      sendSeen: false // DESATIVA O CHECK AZUL QUE ESTÁ DANDO ERRO
-                  });
-                  console.log(`✅ [SUCESSO] Enviado para ${msg.from}`);
-             } catch (e) {
-                  console.error(`❌ Erro no envio: ${e.message}`);
-               }
-             }
+            for (const parte of partes) {
+                if (!instancias[idEmpresa]) break;
+                await new Promise(res => setTimeout(res, 2000));
+                try {
+                    await client.sendMessage(msg.from, parte.trim(), { 
+                        sendSeen: false 
+                    });
+                    console.log(`✅ [SUCESSO] Enviado para ${msg.from}`);
+                } catch (e) {
+                    console.error(`❌ Erro no envio: ${e.message}`);
+                }
+            }
 
             if (ePedidoFinalizado && !eCancelamento) {
                 try {
