@@ -20,25 +20,26 @@ async function inicializarInstancia(idEmpresaRaw) {
 
     const client = new Client({
         authStrategy: new LocalAuth({ clientId: `empresa_${idEmpresa}` }),
-        userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36',
         /*webVersionCache: {
             type: 'remote',
             remotePath: 'https://raw.githubusercontent.com/wppconnect-team/wa-version/main/html/2.3000.1014133453-alpha.html',
         },*/
        puppeteer: {
-            headless: true,
-            args: [
-                '--no-sandbox',
-                '--disable-setuid-sandbox',
-                '--disable-dev-shm-usage',
-                '--disable-gpu',
-                '--no-zygote',
-                '--single-process'
-            ],
-            // ISSO AQUI É O SEGREDO: Dá tempo do WhatsApp carregar
-            waitNavigationFinished: false,
-        }
-    });
+        headless: true,
+        args: [
+            '--no-sandbox',
+            '--disable-setuid-sandbox',
+            '--disable-dev-shm-usage',
+            '--disable-accelerated-2d-canvas',
+            '--no-first-run',
+            '--no-zygote',
+            '--single-process',
+            '--disable-gpu'
+        ],
+    },
+    // O USER AGENT faz o WhatsApp achar que é um Chrome normal de Windows
+    userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36'
+});
     client.options.ackTimeoutMs = 0;
 
     client.on('qr', (qr) => {
@@ -62,6 +63,15 @@ async function inicializarInstancia(idEmpresaRaw) {
         } catch (err) {
             console.error("❌ ERRO CRÍTICO NO READY:", err);
         }
+
+
+        client.on('authenticated', () => {
+    console.log(`🔑 [Empresa ${idEmpresa}] Autenticado! Carregando interface...`);
+});
+
+client.on('auth_failure', msg => {
+    console.error(`❌ Falha na autenticação: ${msg}`);
+});
     });
 
     let desconectando = false;
