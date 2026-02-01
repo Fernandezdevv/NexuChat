@@ -20,25 +20,27 @@ async function inicializarInstancia(idEmpresaRaw) {
 
     const client = new Client({
         authStrategy: new LocalAuth({ clientId: `empresa_${idEmpresa}` }),
+        userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36',
         /*webVersionCache: {
             type: 'remote',
             remotePath: 'https://raw.githubusercontent.com/wppconnect-team/wa-version/main/html/2.3000.1014133453-alpha.html',
         },*/
         puppeteer: {
-            headless: true,
-            executablePath: '/usr/bin/google-chrome-stable', // Força o uso do Chrome do sistema
+            headless: true, // Pode testar como 'new' se o seu puppeteer for o mais atual
             args: [
                 '--no-sandbox',
                 '--disable-setuid-sandbox',
-                '--disable-extensions',
                 '--disable-dev-shm-usage',
-                '--no-zygote',
-                '--disable-gpu',
-                '--single-process',
-                '--no-first-run',
                 '--disable-accelerated-2d-canvas',
-                '--disable-session-crashed-bubble'
+                '--no-first-run',
+                '--no-zygote',
+                '--single-process', // Remova esta linha se o erro persistir
+                '--disable-gpu'
             ],
+            // Isso aqui ajuda a evitar o erro de "main frame too early"
+            handleSIGINT: false,
+            handleSIGTERM: false,
+            handleSIGHUP: false,
         }
     });
     client.options.ackTimeoutMs = 0;
