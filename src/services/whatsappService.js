@@ -20,10 +20,10 @@ async function inicializarInstancia(idEmpresaRaw) {
 
     const client = new Client({
         authStrategy: new LocalAuth({ clientId: `empresa_${idEmpresa}` }),
-        webVersionCache: {
+        /*webVersionCache: {
             type: 'remote',
             remotePath: 'https://raw.githubusercontent.com/wppconnect-team/wa-version/main/html/2.3000.1014133453-alpha.html',
-        },
+        },*/
         puppeteer: {
             headless: true,
             args: [
@@ -134,7 +134,10 @@ async function inicializarInstancia(idEmpresaRaw) {
             //const chat = await msg.getChat();
             let respostaIA = await processarMensagem(idEmpresa, msg.from, msg.body);
 
-            if (!respostaIA || respostaIA.includes("Erro da API")) return;
+            if (!respostaIA || respostaIA.includes("Erro da API")) {
+              console.log(`⚠️ IA falhou para Empresa ${idEmpresa}. Resposta: ${respostaIA}`);
+            return;
+}
 
             const eCancelamento = respostaIA.toLowerCase().includes('[pedido_cancelado]');
             const ePedidoFinalizado = respostaIA.toLowerCase().includes('[pedido_finalizado]');
