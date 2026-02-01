@@ -26,6 +26,7 @@ async function inicializarInstancia(idEmpresaRaw) {
         },*/
         puppeteer: {
             headless: true,
+            executablePath: '/usr/bin/google-chrome-stable', // Força o uso do Chrome do sistema
             args: [
                 '--no-sandbox',
                 '--disable-setuid-sandbox',
