@@ -29,11 +29,11 @@ async function inicializarInstancia(idEmpresaRaw) {
                 '--no-sandbox',
                 '--disable-setuid-sandbox',
                 '--disable-dev-shm-usage',
-                '--disable-accelerated-2d-canvas',
-                '--no-first-run',
+                '--disable-gpu',
                 '--no-zygote',
-                '--single-process',
-                '--disable-gpu'
+                // Remova o '--single-process' (ele causa travamentos no READY)
+                '--hide-scrollbars',
+                '--disable-notifications',
             ],
         },
         // O USER AGENT faz o WhatsApp achar que é um Chrome normal de Windows
