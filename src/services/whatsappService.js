@@ -49,29 +49,41 @@ async function inicializarInstancia(idEmpresaRaw) {
         }
     });
 
+   // 1. Evento de Autenticação (Acontece logo após o scan)
+    client.on('authenticated', () => {
+        console.log(`🔑 [Empresa ${idEmpresa}] Autenticado com sucesso! Carregando mensagens...`);
+    });
+
+    // 2. Evento Ready (Acontece quando tudo carregou e o bot está pronto)
     client.on('ready', async () => {
         try {
             console.log(`✅ [DEBUG] Evento READY disparado para Empresa: ${idEmpresa}`);
-            const numeroConectado = client.info.wid.user.toString();
-            console.log(`📱 Número detectado: ${numeroConectado}`);
             
-            await db.execute(
-                'UPDATE empresas SET whatsapp_numero = ? WHERE id = ?',
-                [numeroConectado, idEmpresa]
-            );
-            console.log(`💾 Banco atualizado com sucesso.`);
+            // Verifica se info e wid existem para evitar erro de undefined
+            if (client.info && client.info.wid) {
+                const numeroConectado = client.info.wid.user.toString();
+                console.log(`📱 Número detectado: ${numeroConectado}`);
+                
+                await db.execute(
+                    'UPDATE empresas SET whatsapp_numero = ? WHERE id = ?',
+                    [numeroConectado, idEmpresa]
+                );
+                console.log(`💾 Banco atualizado com sucesso.`);
+            }
         } catch (err) {
-            console.error("❌ ERRO CRÍTICO NO READY:", err);
+            console.error("❌ ERRO CRÍTICO NO READY:", err.message);
         }
+    });
 
+    // 3. Evento de Falha
+    client.on('auth_failure', msg => {
+        console.error(`❌ Falha na autenticação da Empresa ${idEmpresa}: ${msg}`);
+    });
 
-        client.on('authenticated', () => {
-    console.log(`🔑 [Empresa ${idEmpresa}] Autenticado! Carregando interface...`);
-});
-
-client.on('auth_failure', msg => {
-    console.error(`❌ Falha na autenticação: ${msg}`);
-});
+    // 4. Inicialização (Mantenha no final da função inicializarInstancia)
+    client.initialize().catch(err => {
+        console.error(`Erro ao inicializar empresa ${idEmpresa}:`, err.message);
+    });
     });
 
     let desconectando = false;
